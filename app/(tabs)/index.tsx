@@ -4,7 +4,9 @@ import { ActionButton } from '@/components/ActionButton';
 import Colors from '@/constants/Colors';
 import { LogoIcon } from '@/components/LogoIcon';
 import { Scratch } from '@/components/Scratch';
-import React, { useState } from 'react';
+import type { Position } from '@/types/position';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/services/supabase';
 import Animated, { 
   withSpring, 
   useAnimatedStyle,
@@ -13,17 +15,33 @@ import Animated, {
   FadeIn,
 } from 'react-native-reanimated';
 
-// Mock data for testing
-const mockPosition = {
-  id: '1',
-  name: 'Test Position',
-  image_url: 'https://picsum.photos/400',
-  created_at: new Date().toISOString(),
-};
-
 export default function Index() {
   const [showButtons, setShowButtons] = useState(false);
   const [hasInitialLayout, setHasInitialLayout] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchRandomPosition();
+  }, []);
+
+  const fetchRandomPosition = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('positions')
+        .select('*')
+        .limit(1)
+        .single();
+
+      if (error) throw error;
+      setCurrentPosition(data);
+    } catch (error) {
+      console.error('Error fetching position:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{
@@ -44,6 +62,22 @@ export default function Index() {
       setShowButtons(true);
     }, 100);
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
+  if (!currentPosition) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <Text>No positions available</Text>
+      </View>
+    );
+  }
 
   return (
     <>
@@ -71,7 +105,7 @@ export default function Index() {
               hasInitialLayout && animatedStyle
             ]}>
               <Scratch
-                position={mockPosition}
+                position={currentPosition}
                 onScratchComplete={handleScratchComplete}
               />
             </Animated.View>
@@ -84,7 +118,11 @@ export default function Index() {
                   label="Dislike" 
                   variant="dislike" 
                   showIcon={true}
-                  onPress={() => console.log('Dislike')}
+                  onPress={() => {
+                    setShowButtons(false);
+                    setHasInitialLayout(false);
+                    fetchRandomPosition();
+                  }}
                 />
                 <ActionButton 
                   label="Share" 
@@ -96,7 +134,11 @@ export default function Index() {
                   label="Like" 
                   variant="like" 
                   showIcon={true}
-                  onPress={() => console.log('Like')}
+                  onPress={() => {
+                    setShowButtons(false);
+                    setHasInitialLayout(false);
+                    fetchRandomPosition();
+                  }}
                 />
               </Animated.View>
             )}
@@ -111,6 +153,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   contentContainer: {
     flex: 1,

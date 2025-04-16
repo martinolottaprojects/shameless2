@@ -1,7 +1,6 @@
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack } from 'expo-router';
 import Colors from '@/constants/Colors';
-import { LogoIcon } from '@/components/LogoIcon';
 import { ThemedText } from '@/components/ThemedText';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -37,14 +36,12 @@ export default function DevTools() {
     <>
       <Stack.Screen
         options={{
-          headerTitle: '',
-          headerLeft: () => (
-            <View style={styles.logoContainer}>
-              <LogoIcon />
-              <ThemedText style={styles.logoText}>DevTools</ThemedText>
-            </View>
-          ),
-          headerRight: () => null,
+          headerTitle: "DevTools",
+          headerTitleStyle: {
+            fontSize: 24,
+            fontWeight: '600',
+            color: Colors.tertiary,
+          },
           headerShadowVisible: false,
         }}
       />
@@ -149,18 +146,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 20,
     paddingTop: 60,
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    gap: 8,
-  },
-  logoText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: Colors.tertiary,
-    letterSpacing: 1,
   },
   section: {
     gap: 12,

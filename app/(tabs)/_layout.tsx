@@ -31,7 +31,7 @@ export default function TabLayout() {
           height: 60,
           paddingBottom: 10,
         },
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
@@ -45,7 +45,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Feed',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" size={26} color={color} />
           ),
