@@ -57,12 +57,12 @@ function RootLayoutNav() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <OnboardingProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <StatusBar hidden />
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="onboarding" />
             <Stack.Screen name="+not-found" />
           </Stack>
-          <StatusBar style="auto" />
         </ThemeProvider>
       </OnboardingProvider>
     </GestureHandlerRootView>

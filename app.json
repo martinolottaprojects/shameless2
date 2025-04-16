@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.shameless2.app",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIStatusBarHidden": true
       }
     },
     "android": {
@@ -20,7 +21,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.shameless2.app"
+      "package": "com.shameless2.app",
+      "statusBar": {
+        "hidden": true
+      }
     },
     "web": {
       "bundler": "metro",

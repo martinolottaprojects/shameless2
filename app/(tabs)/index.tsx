@@ -1,125 +1,149 @@
-import { Image, StyleSheet, Platform, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Stack } from 'expo-router';
+import { ActionButton } from '@/components/ActionButton';
+import Colors from '@/constants/Colors';
+import { LogoIcon } from '@/components/LogoIcon';
+import { Scratch } from '@/components/Scratch';
+import React, { useState } from 'react';
+import Animated, { 
+  withSpring, 
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+  FadeIn,
+} from 'react-native-reanimated';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useSuperwall } from '@/hooks/useSuperwall';
-import { useOnboarding } from '@/contexts/OnboardingContext';
-import { useRouter } from 'expo-router';
-import { SUPERWALL_TRIGGERS } from '@/config/superwall';
+// Mock data for testing
+const mockPosition = {
+  id: '1',
+  name: 'Test Position',
+  image_url: 'https://picsum.photos/400',
+  created_at: new Date().toISOString(),
+};
 
-export default function HomeScreen() {
-  const { setIsOnboarded } = useOnboarding();
-  const { showPaywall } = useSuperwall();
-  const router = useRouter();
+export default function Index() {
+  const [showButtons, setShowButtons] = useState(false);
+  const [hasInitialLayout, setHasInitialLayout] = useState(false);
 
-  const handleRestartOnboarding = async () => {
-    await setIsOnboarded(false);
-    router.push('/onboarding');
-  };
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{
+      translateY: withSpring(
+        showButtons ? -50 : 0,
+        {
+          damping: 15,
+          stiffness: 100,
+          mass: 0.5,
+        }
+      ),
+    }],
+  }));
 
-  const handleShowPaywall = () => {
-    showPaywall(SUPERWALL_TRIGGERS.ONBOARDING);
+  const handleScratchComplete = () => {
+    setHasInitialLayout(true);
+    setTimeout(() => {
+      setShowButtons(true);
+    }, 100);
   };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-      
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleShowPaywall}>
-          <ThemedText type="defaultSemiBold" style={styles.buttonText}>
-            Show Paywall
-          </ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={handleRestartOnboarding}>
-          <ThemedText type="defaultSemiBold" style={styles.secondaryButtonText}>
-            Restart Onboarding
-          </ThemedText>
-        </TouchableOpacity>
+    <>
+      <Stack.Screen
+        options={{
+          headerTitle: '',
+          headerLeft: () => (
+            <View style={styles.logoContainer}>
+              <LogoIcon />
+              <Text style={styles.logoText}>Shameless</Text>
+            </View>
+          ),
+          headerRight: () => null,
+          headerShadowVisible: false,
+        }}
+      />
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <View style={[
+            styles.mainContainer,
+            (showButtons || hasInitialLayout) && styles.mainContainerWithButtons
+          ]}>
+            <Animated.View style={[
+              styles.cardWrapper,
+              hasInitialLayout && animatedStyle
+            ]}>
+              <Scratch
+                position={mockPosition}
+                onScratchComplete={handleScratchComplete}
+              />
+            </Animated.View>
+            {showButtons && (
+              <Animated.View 
+                entering={FadeIn.duration(200).easing(Easing.out(Easing.ease))}
+                style={styles.actionContainer}
+              >
+                <ActionButton 
+                  label="Dislike" 
+                  variant="dislike" 
+                  showIcon={true}
+                  onPress={() => console.log('Dislike')}
+                />
+                <ActionButton 
+                  label="Share" 
+                  variant="share" 
+                  showIcon={true}
+                  onPress={() => console.log('Share')} 
+                />
+                <ActionButton 
+                  label="Like" 
+                  variant="like" 
+                  showIcon={true}
+                  onPress={() => console.log('Like')}
+                />
+              </Animated.View>
+            )}
+          </View>
+        </View>
       </View>
-    </ParallaxScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  contentContainer: {
+    flex: 1,
+    width: '100%',
+  },
+  mainContainer: {
+    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    gap: 30,
+    padding: 50,
+  },
+  logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginLeft: 16,
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  logoText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: Colors.tertiary,
+    letterSpacing: 1,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  mainContainerWithButtons: {
+    paddingTop: 50,
   },
-  buttonContainer: {
-    marginTop: 24,
-    gap: 12,
-  },
-  button: {
-    padding: 16,
-    borderRadius: 12,
+  cardWrapper: {
     alignItems: 'center',
-    backgroundColor: '#0A7EA4',
-  },
-  buttonText: {
-    color: 'white',
-  },
-  secondaryButton: {
-    backgroundColor: '#0A7EA420',
-  },
-  secondaryButtonText: {
-    color: '#0A7EA4',
+    justifyContent: 'center',
   },
 });
