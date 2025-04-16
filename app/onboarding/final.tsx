@@ -1,7 +1,6 @@
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSuperwall } from '@/hooks/useSuperwall';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { SUPERWALL_TRIGGERS } from '@/config/superwall';
