@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Shameless 2",
-    "slug": "shameless2",
+    "slug": "shameless",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
