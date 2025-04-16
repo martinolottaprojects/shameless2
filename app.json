@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-app-boilerplate",
-    "slug": "shameless",
+    "name": "Shameless 2",
+    "slug": "shameless2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

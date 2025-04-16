@@ -15,7 +15,7 @@ A React Native Expo application.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/shameless2.git
+git clone https://github.com/martinolottaprojects/shameless2.git
 cd shameless2
 ```
 
