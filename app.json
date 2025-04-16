@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "expo-app-boilerplate",
-    "slug": "expo-app-boilerplate",
+    "slug": "shameless",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -47,8 +47,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "e55fcdea-13e2-4c3b-a4c3-59c174184eb5"
+        "projectId": "214da5e0-e199-4b98-9129-550992d84a13"
       }
-    }
+    },
+    "owner": "martinoklapez"
   }
 }
