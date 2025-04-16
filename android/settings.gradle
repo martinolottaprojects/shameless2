@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'shameless2'
+rootProject.name = 'Shameless 2'
 
 dependencyResolutionManagement {
   versionCatalogs {

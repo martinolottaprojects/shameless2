@@ -24,3 +24,11 @@ export const Colors = {
     tabIconSelected: tintColorDark,
   },
 };
+
+export default {
+  primary: '#FF5252',    // Coral red for dislike button
+  secondary: '#FFFFFF',  // Yellow for share button
+  tertiary: '#000000',   // Black for text
+  quaternary: '#00AD00', // Green for like button
+  background: '#FFFFFF', // White background
+};

@@ -34,7 +34,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>exp+shameless2</string>
+          <string>exp+shameless</string>
         </array>
       </dict>
     </array>

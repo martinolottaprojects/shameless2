@@ -27,6 +27,7 @@
         <data android:scheme="myapp"/>
         <data android:scheme="com.shameless2.app"/>
         <data android:scheme="exp+shameless2"/>
+        <data android:scheme="exp+shameless"/>
       </intent-filter>
     </activity>
   </application>
