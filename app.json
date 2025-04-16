@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.cqjack.expoappboilerplate",
+      "bundleIdentifier": "com.shameless2.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.cqjack.expoappboilerplate"
+      "package": "com.shameless2.app"
     },
     "web": {
       "bundler": "metro",

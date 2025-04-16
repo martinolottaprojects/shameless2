@@ -1,4 +1,4 @@
-package com.cqjack.expoappboilerplate
+package com.shameless2.app
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
