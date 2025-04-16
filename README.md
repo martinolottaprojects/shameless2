@@ -1,47 +1,49 @@
-# Welcome to jack's Expo React Native free boilerplate 👋
+# Shameless2
 
-This is an [Expo](https://expo.dev) template project with Superwall libraries ready to use and a simple onboarding sequence for first time users.
+A React Native Expo application.
 
-This free boilerplate is sponsored by [post bridge](https://post-bridge.com) - a super simple and affordable social media scheduling tool for small teams and founders.
+## Getting Started
 
-## Get started
+### Prerequisites
 
-1. Clone this repository 
+- Node.js (v14 or later)
+- npm or yarn
+- Expo CLI
+- iOS Simulator (for Mac users) or Android Emulator
 
-2. Install dependencies
+### Installation
 
-   ```bash
-   npm install
-   ```
-Or 
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/shameless2.git
+cd shameless2
+```
 
-  ```bash
-   npx expo install
-   ```
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
 
-3. Start the app
+3. Start the development server:
+```bash
+npm start
+# or
+yarn start
+```
 
-   ```bash
-    npx expo start
-   ```
--- you will need to make a development build or run in development mode as Superwall does not work in Expo GO
+## Development
 
-In the output, you'll find options to open the app in a
+- Run on iOS simulator: `npm run ios`
+- Run on Android emulator: `npm run android`
+- Run on web: `npm run web`
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Building
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- iOS: `eas build --platform ios`
+- Android: `eas build --platform android`
 
-## Need help?
+## License
 
-Join [the discord](https://discord.gg/XuT2V5GUkA) for app founders and @jackfriks for help.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+This project is licensed under the MIT License.
