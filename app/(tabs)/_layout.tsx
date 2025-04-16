@@ -1,21 +1,36 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { Colors } from '@/constants/Colors';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import Colors from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { useAuth } from '@/contexts/AuthContext';
+import { Redirect } from 'expo-router';
 
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const theme = colorScheme ?? 'light';
+  const { session } = useAuth();
+
+  // If there's no session, redirect to the auth screen
+  if (!session) {
+    return <Redirect href="/login" />;
+  }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[theme].tint,
+        tabBarActiveTintColor: Colors.primary,
+        tabBarInactiveTintColor: '#64748B',
+        tabBarStyle: {
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
+          height: 60,
+          paddingBottom: 10,
+        },
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
@@ -31,21 +46,27 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Feather name="home" size={24} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="home" size={26} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="favorites"
         options={{
           title: 'Favorites',
-          tabBarIcon: ({ color }) => <Feather name="heart" size={24} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="heart" size={26} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'DevTools',
-          tabBarIcon: ({ color }) => <Feather name="tool" size={24} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="tools" size={26} color={color} />
+          ),
         }}
       />
     </Tabs>

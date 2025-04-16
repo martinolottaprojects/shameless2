@@ -51,8 +51,10 @@
         "origin": false
       },
       "eas": {
-        "projectId": "214da5e0-e199-4b98-9129-550992d84a13"
-      }
+        "projectId": "214da5e0-e199-4b98-9129-550992d84a13",
+      },
+      "supabaseUrl": "https://esdzfopaahvbokddexeh.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzZHpmb3BhYWh2Ym9rZGRleGVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcyMTExMzEsImV4cCI6MjA1Mjc4NzEzMX0.yTQZlc_bcSnsAOIEsbBuYMDDMjZP7lm1AywWd-Jf_1M"
     },
     "owner": "martinoklapez"
   }

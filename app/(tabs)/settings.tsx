@@ -6,12 +6,31 @@ import { ThemedText } from '@/components/ThemedText';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function DevTools() {
   const { isOnboarded, setIsOnboarded } = useOnboarding();
+  const { signOut, session } = useAuth();
 
   const handleResetOnboarding = () => {
     setIsOnboarded(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const handleResetAll = async () => {
+    try {
+      setIsOnboarded(false);
+      await signOut();
+    } catch (error) {
+      console.error('Error resetting app:', error);
+    }
   };
 
   return (
@@ -63,6 +82,56 @@ export default function DevTools() {
               </TouchableOpacity>
             </View>
           </View>
+
+          <View style={[styles.section, styles.sectionSpacing]}>
+            <ThemedText style={styles.sectionTitle}>Authentication</ThemedText>
+            <View style={styles.card}>
+              <View style={styles.statusRow}>
+                <ThemedText style={styles.label}>Status:</ThemedText>
+                <View style={[styles.statusBadge, styles.statusCompleted]}>
+                  <MaterialCommunityIcons 
+                    name="shield-check" 
+                    size={16} 
+                    color="#057A55" 
+                  />
+                  <ThemedText style={[styles.statusText, styles.statusTextCompleted]}>
+                    Authenticated
+                  </ThemedText>
+                </View>
+              </View>
+
+              <View style={styles.statusRow}>
+                <ThemedText style={styles.label}>User Email:</ThemedText>
+                <ThemedText style={styles.emailText}>
+                  {session?.user?.email || 'N/A'}
+                </ThemedText>
+              </View>
+
+              <TouchableOpacity 
+                style={[styles.button, styles.logoutButton]} 
+                onPress={handleLogout}
+              >
+                <MaterialCommunityIcons name="logout" size={20} color="#fff" />
+                <ThemedText style={styles.buttonText}>Logout</ThemedText>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={[styles.section, styles.sectionSpacing]}>
+            <ThemedText style={styles.sectionTitle}>Reset App</ThemedText>
+            <View style={styles.card}>
+              <ThemedText style={styles.warningText}>
+                This will reset onboarding and log you out of the app.
+              </ThemedText>
+              <TouchableOpacity 
+                style={[styles.button, styles.resetAllButton]} 
+                onPress={handleResetAll}
+              >
+                <MaterialCommunityIcons name="refresh-circle" size={20} color="#fff" />
+                <ThemedText style={styles.buttonText}>Reset All</ThemedText>
+              </TouchableOpacity>
+            </View>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </>
@@ -96,6 +165,9 @@ const styles = StyleSheet.create({
   section: {
     gap: 12,
   },
+  sectionSpacing: {
+    marginTop: 24,
+  },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
@@ -117,6 +189,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     color: '#64748B',
+  },
+  emailText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: Colors.tertiary,
   },
   statusBadge: {
     flexDirection: 'row',
@@ -151,9 +228,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
   },
+  logoutButton: {
+    backgroundColor: '#DC2626',
+  },
+  resetAllButton: {
+    backgroundColor: '#991B1B',
+  },
   buttonText: {
     color: '#fff',
     fontSize: 15,
     fontWeight: '600',
+  },
+  warningText: {
+    fontSize: 14,
+    color: '#991B1B',
+    textAlign: 'center',
   },
 }); 
