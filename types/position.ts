@@ -1,6 +1,13 @@
-export interface Position {
+export type Position = {
   id: string;
-  name: string;
-  image_url: string;
-  created_at: string;
-} 
+  title: string;
+  company: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements: string[];
+  responsibilities: string[];
+  salary?: string;
+  postedAt: string;
+  image_url?: string;
+}; 

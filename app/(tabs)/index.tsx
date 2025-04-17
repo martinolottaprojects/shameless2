@@ -8,6 +8,7 @@ import type { Position } from '@/types/position';
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/services/supabase';
 import { usePositionInteraction } from '@/hooks/usePositionInteraction';
+import { useAuth } from '@/contexts/AuthContext';
 import Animated, { 
   withSpring, 
   useAnimatedStyle,
@@ -22,17 +23,34 @@ export default function Index() {
   const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
   const [loading, setLoading] = useState(true);
   const { likePosition, dislikePosition, loading: interactionLoading } = usePositionInteraction();
+  const { session } = useAuth();
 
   useEffect(() => {
     fetchRandomPosition();
   }, []);
 
   const fetchRandomPosition = async () => {
+    if (!session?.user) return;
+
     try {
       setLoading(true);
+      
+      // First, get all position IDs that the user has already interacted with
+      const { data: interactedPositions, error: interactionError } = await supabase
+        .from('position_interactions')
+        .select('position_id')
+        .eq('user_id', session.user.id);
+
+      if (interactionError) throw interactionError;
+
+      // Get the array of position IDs to exclude
+      const excludeIds = interactedPositions.map(p => p.position_id);
+
+      // Fetch a random position that hasn't been interacted with
       const { data, error } = await supabase
         .from('positions')
         .select('*')
+        .not('id', 'in', excludeIds.length > 0 ? `(${excludeIds.join(',')})` : '(null)')
         .limit(1)
         .single();
 
