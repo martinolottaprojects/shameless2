@@ -6,7 +6,7 @@ import { Position } from '@/types/position';
 import PositionCard from '../../components/PositionCard';
 
 export default function Favorites() {
-  const { likedPositions, loading } = useLikedPositions();
+  const { likedPositions, loading, removePosition } = useLikedPositions();
 
   // Remove any duplicate positions based on ID
   const uniquePositions = Array.from(new Map(
@@ -14,7 +14,11 @@ export default function Favorites() {
   ).values());
 
   const renderItem = ({ item }: { item: Position }) => (
-    <PositionCard position={item} isClickable={false} />
+    <PositionCard 
+      position={item} 
+      isClickable={false}
+      onRemove={() => removePosition(item.id)}
+    />
   );
 
   const renderEmptyComponent = () => (
