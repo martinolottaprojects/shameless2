@@ -7,6 +7,7 @@ import { Scratch } from '@/components/Scratch';
 import type { Position } from '@/types/position';
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/services/supabase';
+import { usePositionInteraction } from '@/hooks/usePositionInteraction';
 import Animated, { 
   withSpring, 
   useAnimatedStyle,
@@ -20,6 +21,7 @@ export default function Index() {
   const [hasInitialLayout, setHasInitialLayout] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
   const [loading, setLoading] = useState(true);
+  const { likePosition, dislikePosition, loading: interactionLoading } = usePositionInteraction();
 
   useEffect(() => {
     fetchRandomPosition();
@@ -40,6 +42,26 @@ export default function Index() {
       console.error('Error fetching position:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleInteraction = async (type: 'like' | 'dislike') => {
+    if (!currentPosition || interactionLoading) return;
+
+    try {
+      if (type === 'like') {
+        await likePosition(currentPosition.id);
+      } else {
+        await dislikePosition(currentPosition.id);
+      }
+      
+      // Reset UI state and fetch next position
+      setShowButtons(false);
+      setHasInitialLayout(false);
+      fetchRandomPosition();
+    } catch (error) {
+      console.error('Error interacting with position:', error);
+      // You might want to show an error message to the user here
     }
   };
 
@@ -118,11 +140,7 @@ export default function Index() {
                   label="Dislike" 
                   variant="dislike" 
                   showIcon={true}
-                  onPress={() => {
-                    setShowButtons(false);
-                    setHasInitialLayout(false);
-                    fetchRandomPosition();
-                  }}
+                  onPress={() => handleInteraction('dislike')}
                 />
                 <ActionButton 
                   label="Share" 
@@ -134,11 +152,7 @@ export default function Index() {
                   label="Like" 
                   variant="like" 
                   showIcon={true}
-                  onPress={() => {
-                    setShowButtons(false);
-                    setHasInitialLayout(false);
-                    fetchRandomPosition();
-                  }}
+                  onPress={() => handleInteraction('like')}
                 />
               </Animated.View>
             )}
