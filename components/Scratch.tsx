@@ -9,25 +9,22 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Path, Mask, Rect } from 'react-native-svg';
 import Colors from '@/constants/Colors';
+import type { Position } from '@/types/position';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const SCRATCH_THRESHOLD = 0.4; // 40% needs to be scratched
 const windowWidth = Dimensions.get('window').width;
 const imageSize = windowWidth * 0.8;
 
-interface Position {
-  id: string;
-  name: string;
-  image_url: string;
-  created_at: string;
-}
-
 interface ScratchProps {
   position: Position;
   onScratchComplete: () => void;
+  disabled?: boolean;
+  onLike?: () => void;
+  onDislike?: () => void;
 }
 
-export const Scratch: React.FC<ScratchProps> = ({ position, onScratchComplete }) => {
+export const Scratch: React.FC<ScratchProps> = ({ position, onScratchComplete, disabled = false }) => {
   const path = useSharedValue('');
   const previousPoint = useSharedValue({ x: 0, y: 0 });
   const scratchedPixels = useSharedValue(0);
@@ -44,6 +41,7 @@ export const Scratch: React.FC<ScratchProps> = ({ position, onScratchComplete })
   const gesture = Gesture.Pan()
     .minDistance(0)
     .averageTouches(true)
+    .enabled(!disabled)
     .onStart((e) => {
       previousPoint.value = { x: e.x, y: e.y };
       path.value += `M${e.x} ${e.y}`;

@@ -16,12 +16,36 @@ import Animated, {
   Easing,
   FadeIn,
 } from 'react-native-reanimated';
+import PositionCard from '@/components/PositionCard';
+
+// Database types
+interface DatabasePosition {
+  id: string;
+  name: string;
+  image_url: string;
+  created_at: string;
+}
+
+// Type adapter function
+const adaptDatabasePosition = (dbPosition: DatabasePosition): Position => ({
+  id: dbPosition.id,
+  title: dbPosition.name,
+  company: '',
+  location: '',
+  type: '',
+  description: '',
+  requirements: [],
+  responsibilities: [],
+  postedAt: dbPosition.created_at,
+  image_url: dbPosition.image_url
+});
 
 export default function Index() {
   const [showButtons, setShowButtons] = useState(false);
   const [hasInitialLayout, setHasInitialLayout] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
   const [loading, setLoading] = useState(true);
+  const [noPositionsAvailable, setNoPositionsAvailable] = useState(false);
   const { likePosition, dislikePosition, loading: interactionLoading } = usePositionInteraction();
   const { session } = useAuth();
 
@@ -44,18 +68,44 @@ export default function Index() {
       if (interactionError) throw interactionError;
 
       // Get the array of position IDs to exclude
-      const excludeIds = interactedPositions.map(p => p.position_id);
+      const excludeIds = interactedPositions?.map(p => p.position_id) || [];
 
       // Fetch a random position that hasn't been interacted with
-      const { data, error } = await supabase
+      let query = supabase
         .from('positions')
         .select('*')
-        .not('id', 'in', excludeIds.length > 0 ? `(${excludeIds.join(',')})` : '(null)')
-        .limit(1)
-        .single();
+        .limit(1);
+      
+      // Only add the not-in condition if there are positions to exclude
+      if (excludeIds.length > 0) {
+        query = query.not('id', 'in', `(${excludeIds.join(',')})`);
+      }
 
-      if (error) throw error;
-      setCurrentPosition(data);
+      const { data, error } = await query.single();
+
+      if (error) {
+        if (error.message.includes('PGRST116')) {
+          setNoPositionsAvailable(true);
+          const dummyPosition: Position = {
+            id: 'dummy',
+            title: 'No More Positions',
+            company: 'N/A',
+            location: 'N/A',
+            type: 'N/A',
+            description: 'You have interacted with all available positions.',
+            requirements: [],
+            responsibilities: [],
+            postedAt: new Date().toISOString(),
+            image_url: 'https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=2500&auto=format&fit=crop'
+          };
+          setCurrentPosition(dummyPosition);
+        } else {
+          console.error('Error fetching position:', error);
+        }
+      } else {
+        setNoPositionsAvailable(false);
+        setCurrentPosition(adaptDatabasePosition(data));
+      }
     } catch (error) {
       console.error('Error fetching position:', error);
     } finally {
@@ -64,7 +114,7 @@ export default function Index() {
   };
 
   const handleInteraction = async (type: 'like' | 'dislike') => {
-    if (!currentPosition || interactionLoading) return;
+    if (!currentPosition || interactionLoading || noPositionsAvailable) return;
 
     try {
       if (type === 'like') {
@@ -79,7 +129,6 @@ export default function Index() {
       fetchRandomPosition();
     } catch (error) {
       console.error('Error interacting with position:', error);
-      // You might want to show an error message to the user here
     }
   };
 
@@ -103,22 +152,6 @@ export default function Index() {
     }, 100);
   };
 
-  if (loading) {
-    return (
-      <View style={[styles.container, styles.loadingContainer]}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
-    );
-  }
-
-  if (!currentPosition) {
-    return (
-      <View style={[styles.container, styles.loadingContainer]}>
-        <Text>No positions available</Text>
-      </View>
-    );
-  }
-
   return (
     <>
       <Stack.Screen
@@ -135,47 +168,61 @@ export default function Index() {
         }}
       />
       <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          <View style={[
-            styles.mainContainer,
-            (showButtons || hasInitialLayout) && styles.mainContainerWithButtons
-          ]}>
-            <Animated.View style={[
-              styles.cardWrapper,
-              hasInitialLayout && animatedStyle
-            ]}>
-              <Scratch
-                position={currentPosition}
-                onScratchComplete={handleScratchComplete}
-              />
-            </Animated.View>
-            {showButtons && (
-              <Animated.View 
-                entering={FadeIn.duration(200).easing(Easing.out(Easing.ease))}
-                style={styles.actionContainer}
-              >
-                <ActionButton 
-                  label="Dislike" 
-                  variant="dislike" 
-                  showIcon={true}
-                  onPress={() => handleInteraction('dislike')}
-                />
-                <ActionButton 
-                  label="Share" 
-                  variant="share" 
-                  showIcon={true}
-                  onPress={() => console.log('Share')} 
-                />
-                <ActionButton 
-                  label="Like" 
-                  variant="like" 
-                  showIcon={true}
-                  onPress={() => handleInteraction('like')}
-                />
-              </Animated.View>
-            )}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={Colors.primary} />
           </View>
-        </View>
+        ) : (
+          <Animated.View 
+            style={styles.contentContainer}
+            entering={FadeIn.duration(300).easing(Easing.out(Easing.ease))}
+          >
+            <View style={[
+              styles.mainContainer,
+              (showButtons || hasInitialLayout) && styles.mainContainerWithButtons
+            ]}>
+              <Animated.View style={[
+                styles.cardWrapper,
+                hasInitialLayout && animatedStyle
+              ]}>
+                {currentPosition && (
+                  <Scratch
+                    position={currentPosition}
+                    onScratchComplete={handleScratchComplete}
+                    disabled={noPositionsAvailable}
+                    onLike={() => handleInteraction('like')}
+                    onDislike={() => handleInteraction('dislike')}
+                  />
+                )}
+              </Animated.View>
+              {showButtons && !noPositionsAvailable && (
+                <Animated.View 
+                  entering={FadeIn.duration(200).easing(Easing.out(Easing.ease))}
+                  style={styles.actionContainer}
+                >
+                  <ActionButton 
+                    label="Dislike" 
+                    variant="dislike" 
+                    showIcon={true}
+                    onPress={() => handleInteraction('dislike')}
+                  />
+                  <ActionButton 
+                    label="Share" 
+                    variant="share" 
+                    showIcon={true}
+                    onPress={() => console.log('Share')} 
+                  />
+                  <ActionButton 
+                    label="Like" 
+                    variant="like" 
+                    showIcon={true}
+                    onPress={() => handleInteraction('like')}
+                  />
+                </Animated.View>
+              )}
+            </View>
+          </Animated.View>
+        )}
       </View>
     </>
   );
@@ -187,8 +234,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff',
   },
   contentContainer: {
     flex: 1,

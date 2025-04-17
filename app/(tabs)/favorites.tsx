@@ -14,7 +14,7 @@ export default function Favorites() {
   ).values());
 
   const renderItem = ({ item }: { item: Position }) => (
-    <PositionCard position={item} />
+    <PositionCard position={item} isClickable={false} />
   );
 
   const renderEmptyComponent = () => (
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
+    paddingBottom: 100,
   },
   separator: {
     height: 16,

@@ -5,22 +5,33 @@ import { Position } from '../types/position';
 
 type Props = {
   position: Position;
+  isClickable?: boolean;
 };
 
-export default function PositionCard({ position }: Props) {
+export default function PositionCard({ position, isClickable = true }: Props) {
   const imageUrl = position.image_url || 'https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=2500&auto=format&fit=crop';
+
+  const CardContent = () => (
+    <View style={styles.card}>
+      <Image
+        source={{ uri: imageUrl }}
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{position.title}</Text>
+      </View>
+    </View>
+  );
+
+  if (!isClickable) {
+    return <CardContent />;
+  }
 
   return (
     <Link href={`/position/${position.id}`} asChild>
       <TouchableOpacity style={styles.card}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{position.title}</Text>
-        </View>
+        <CardContent />
       </TouchableOpacity>
     </Link>
   );
