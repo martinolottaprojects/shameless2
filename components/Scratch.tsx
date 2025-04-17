@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { View, Image, StyleSheet, Dimensions } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { 
   useAnimatedProps,
   useSharedValue,
@@ -83,7 +83,7 @@ export const Scratch: React.FC<ScratchProps> = ({ position, onScratchComplete })
   }));
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <View style={[styles.cardContainer, { width: imageSize, height: imageSize }]}>
         <Image
           source={{ uri: position.image_url }}
@@ -122,7 +122,7 @@ export const Scratch: React.FC<ScratchProps> = ({ position, onScratchComplete })
           </GestureDetector>
         </View>
       </View>
-    </View>
+    </GestureHandlerRootView>
   );
 };
 
